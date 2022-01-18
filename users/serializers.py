@@ -5,12 +5,13 @@ from .models import CustomUser, Resume
 
 class ResumeSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    is_latest = serializers.BooleanField(default=True, initial=True)
     class Meta:
         model = Resume
         # fields = ('resume_name', 'resume_path', 'is_latest', 'user')
         fields = ('__all__')
 
-class CustonUserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     resumes = ResumeSerializer(source='resume_set', many=True, read_only=True)
     class Meta:
         model = CustomUser

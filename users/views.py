@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from .models import CustomUser, Resume
 from django.conf import settings
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -41,16 +40,48 @@ class UserLogoutAPIView(APIView):
 
 class UsersAPIView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
-    serializer_class = ResumeSerializer
+    user_serializer_class = CustomUserSerializer
+    resume_serializer_class = ResumeSerializer
     def get(self, request, format=None):
-        serialized_users = CustomUserSerializer(request.user).data
+        user = request.user
+        if user.isDeleted == True:
+            return Response({"Error": "No User Found"}, status=status.HTTP_400_BAD_REQUEST)
+        serialized_users = CustomUserSerializer(user).data
         return Response(serialized_users, status=status.HTTP_200_OK)
 
     def delete(self, request, format=None):
         user = request.user
+        
+        # Soft Deletion of User
         user.isDeleted = True
+        user.is_active = False
         user.save()
         return Response({"Success" : "User successfully deleted"}, status=status.HTTP_200_OK)
+
+    def put(self, request, format=None):
+        user = request.user
+        data = request.data
+        print(data)
+        user_serializer = self.user_serializer_class(user, data=data)
+        resume_serializer = self.resume_serializer_class(data=data, context={'request' : request})
+        if user_serializer.is_valid():
+            user_serializer.save()
+            if ('resume_name' in data) or ('resume_path' in data):
+                if resume_serializer.is_valid():
+                    # Updating the Old Resume
+                    oldresume = Resume.objects.filter(user=user, is_latest=True).first()
+                    if oldresume:
+                        oldresume.is_latest = False
+                        oldresume.save()
+                    # Adding new resume
+                    resume_serializer.save()
+                    return Response({"Success": "User & Resume successfully updated"}, status=status.HTTP_200_OK)
+                else:
+                    return Response(resume_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"Success": "User successfully updated"}, status=status.HTTP_200_OK)
+        else:
+            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         
 class ResumeAPIView(APIView):
     parser_classes = (MultiPartParser,)

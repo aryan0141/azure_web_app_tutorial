@@ -5,10 +5,14 @@ from .models import Resume, CustomUser
 admin.site.register(Resume)
 
 
+# class HiddenModelAdmin(admin.ModelAdmin):
+#     def get_model_perms(self, *args, **kwargs):
+#         perms = admin.ModelAdmin.get_model_perms(self, *args, **kwargs)
+#         perms['isDeleted'] = True
+#         return perms
+
 @admin.register(CustomUser)
 class UserAdmin(DjangoUserAdmin):
-    """Define admin model for custom User model with no email field."""
-
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name')}),
@@ -25,3 +29,11 @@ class UserAdmin(DjangoUserAdmin):
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
+    exclude = ('isDeleted',)
+
+    def get_queryset(self, request):
+        qs = self.model.objects.filter(isDeleted=False)
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs

@@ -4,6 +4,7 @@ from rest_framework import serializers
 from .models import CustomUser, Resume
 
 class ResumeSerializer(serializers.ModelSerializer):
+
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     is_latest = serializers.BooleanField(default=True, initial=True)
     class Meta:
@@ -11,12 +12,24 @@ class ResumeSerializer(serializers.ModelSerializer):
         # fields = ('resume_name', 'resume_path', 'is_latest', 'user')
         fields = ('__all__')
 
+    
+
 class CustomUserSerializer(serializers.ModelSerializer):
     resumes = ResumeSerializer(source='resume_set', many=True, read_only=True)
+    isDeleted = serializers.HiddenField(default=False)
     class Meta:
         model = CustomUser
         fields = ('id', 'email', 'first_name', 'last_name', 'isDeleted', 'resumes')
-        # fields = '__all__'
+        # extra_kwargs = {
+        #     'password' : {'write_only': True},
+        #     'password2' : {'write_only': True},
+        # }
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data['first_name']
+        instance.last_name = validated_data['last_name']
+        instance.save()
+        return instance
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(required=True, write_only=True)

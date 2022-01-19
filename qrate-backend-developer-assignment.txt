@@ -1,0 +1,43 @@
+What to do it?
+--------------
+Develop a REST API service using Dajngo REST Framework latest version with Postgres database and python 3.x. This service has enpoints for -
+
+1. Create profile
+2. View profile
+3. Update profile
+4. Soft delete profile, soft delete is that it's not permanently deleted it is only marked deleted so it is not shown to any user including admin
+
+5. Profile will have a resume attached with it
+6. Upload resume
+7. Update resume, on update don't delete old one
+8. View current and old resumes
+
+Bonus points for using OAuth as authentication service instead of Django default auth module.
+
+
+How to submit?
+--------------
+Create a git public git repo and push your code on github. Send us link to the repo to review it.
+
+
+Rules?
+------
+
+No rules, do whatever you can do. Take help from google, stack overflow, your seniors or anyone you know except us.
+
+
+Deadline?
+---------
+
+You tell us. You should provide an estimate as soon as you get this assignment. We will consider that estimate as deadline with some buffer for errors. Don't worry we don't expect you to estimate it accurately we just want to judge how did you approach towards estimation.
+
+
+What we look for in a solution?
+-------------------------------
+
+1. Design of REST api endpoints - how idiomatic and yet practical it is
+2. Thoughts put into exploring and handling edge cases
+3. Aptitude and attitude towards learning if you don't know something
+4. Your programming skills of-course, after all that's what you will do here
+5. Communication skills
+

@@ -161,9 +161,6 @@ ACCOUNT_UNIQUE_EMAIL = True
 
 LOGIN_REDIRECT_URL = "/"
 
-
-
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),

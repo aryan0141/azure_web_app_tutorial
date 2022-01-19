@@ -15,6 +15,6 @@ urlpatterns = [
     ), name='openapi-schema'),
     path('', TemplateView.as_view(
         template_name='swagger_doc.html',
-        extra_context={'schema_url':'openapi-schema'}
+        extra_context={'schema_url': 'openapi-schema'}
     ), name='swagger_doc'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

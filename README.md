@@ -23,8 +23,8 @@ Used Django Rest Framework for creating some REST APIs
     ```
 - Create a new virtual environment and activate it.
     ```
-    python -m venv env
-    .\env\Scripts\activate
+    python -m venv venv
+    .\venv\Scripts\activate
     ```
 - Use pip to install other dependencies from `requirements.txt`
     ```

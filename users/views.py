@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from .serializers import CustomUserSerializer, ResumeSerializer, UserRegistrationSerializer
-from rest_framework.parsers import MultiPartParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsOwner
@@ -38,7 +37,7 @@ class UserLogoutAPIView(APIView):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class UsersAPIView(APIView):
+class UserProfileAPIView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
     user_serializer_class = CustomUserSerializer
     resume_serializer_class = ResumeSerializer
@@ -81,24 +80,3 @@ class UsersAPIView(APIView):
             return Response({"Success": "User successfully updated"}, status=status.HTTP_200_OK)
         else:
             return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        
-class ResumeAPIView(APIView):
-    parser_classes = (MultiPartParser,)
-    permission_classes = [IsAuthenticated, IsOwner]
-    serializer_class = ResumeSerializer
-    def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data, context={'request' : request})
-        if serializer.is_valid():
-            # Updating the Old Resume
-            oldresume = Resume.objects.filter(user=request.user, is_latest=True).first()
-            if oldresume:
-                oldresume.is_latest = False
-                oldresume.save()
-
-            # Adding new resume
-            serializer.save()
-            serialized_data = serializer.data
-            return Response(serialized_data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

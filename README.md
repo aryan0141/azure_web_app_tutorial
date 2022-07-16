@@ -1,4 +1,4 @@
-# Aviate Project
+# Django REST
 
 Used Django Rest Framework for creating some REST APIs
 
